@@ -7,11 +7,10 @@
   ],
   "license": "MIT",
   "keywords": [
-    "material-input",
-    "input",
-    "material",
-    "ui",
-    "web-components"
+      "material-design",
+      "webcomponent",
+      "toggle",
+      "form"
   ],
   "homepage": "https://github.com/nuclei/material-input",
   "ignore": [
