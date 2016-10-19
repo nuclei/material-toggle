@@ -12,15 +12,13 @@ An easy drop-in material design vanilla custom toggle element. HTML form ready, 
 <custom-element-demo>
   <template>
     <script src="docs/webcomponentsjs/webcomponents.js"></script>
-    <script src="../src/material-toggle.js"></script>
-    <material-toggle></material-toggle>
+    <script src="src/material-toggle.js"></script>
+    <label><material-toggle name="subscribe" id="subscribe"></material-toggle>Subscribe</label>
+    <label><material-toggle name="remind" id="remind" disabled></material-toggle>Remind</label>
   </template>
 </custom-element-demo>
 ```
 -->
-```html
-<material-toggle></material-toggle>
-```
 
 ## Installation
 ```bash
@@ -36,4 +34,9 @@ Load the `polyfill` and the `material-toggle.js` in your html page or however yo
 ```
 
 ## Usage
-Just drop an `<material-toggle></material-toggle>` element into you html `<form>` element and you are ready to go..
+Just drop an `<material-toggle></material-toggle>` element into you html `<form>` element and you are ready to go.
+
+```html
+<label><material-toggle name="subscribe" id="subscribe"></material-toggle>Subscribe</label>
+<label><material-toggle name="remind" id="remind" disabled></material-toggle>Remind</label>
+```
