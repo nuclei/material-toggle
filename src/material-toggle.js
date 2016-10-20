@@ -1,81 +1,96 @@
 'use strict';
 
-class MaterialToggle extends HTMLInputElement {
+class MaterialToggle extends HTMLElement {
 
+    // Can define constructor arguments if you wish.
     constructor() {
-        super(); // always call super() first in the ctor. This also calls the extended class' ctor.
+      // If you define a ctor, always call super() first!
+      // This is specific to CE and required by the spec.
+      super();
+      this.click(function(){
+          this.querySelector('input').checked = 'checked';
+      }.bind(this));
+      // Attach a shadow root to the element.
+      let shadowRoot = this.attachShadow({mode: 'open'});
+      shadowRoot.innerHTML = `
+          <style>
+            :host{
+            }
+            ::slotted(input){
+                pointer-events: none;
+                position: absolute;
+                left: -100%;
+            }
+            label{
+                display: block;
+                position: relative;
+                width: 20px;
+                height: 30px;
+                background: red;
+            }
+              ::slotted(input::before) {
+                  content: "";
+                  position: absolute;
+                  display: block;
+                  left: -3px;
+                  top: -3px;
+                  height: 16px;
+                  width: 44px;
+                  background: white;
+                  background-image: linear-gradient(var(--material-checkbox-bg-color, rgb(206,212,218)), var(--material-checkbox-bg-color, rgb(206,212,218)));
+                  border-radius: 100px;
+                  transition: all 0.3s ease;
+              }
+              ::slotted(input)::slotted(:after) {
+                  left: 20px;
+                  position: absolute;
+                  left: -5px;
+                  top: -8px;
+                  display: block;
+                  width: 26px;
+                  height: 26px;
+                  border-radius: 100px;
+                  background: var(--material-checkbox-knob-color, rgb(255,255,255));
+                  box-shadow: var(--material-checkbox-shadow, 0 .2rem .5rem rgba(0,0,0,.15));
+                  content: '';
+                  transition: all 0.3s ease;
+              }
+              ::slotted(input):active:after {
+                  transform: scale(1.15, 0.85);
+              }
+              ::slotted(input):checked:before {
+                  background-image: linear-gradient(var(--material-checkbox-highlight-color, rgba(54,79,199,0.5)), var(--material-checkbox-highlight-color, rgba(54,79,199,0.5)));
+              }
+              ::slotted(input):checked:after {
+                  left: 20px;
+                  background: var(--material-checkbox-highlight-color, rgb(54,79,199));
+              }
+              ::slotted(input):disabled:before{
+                  background: var(--material-checkbox-disabled-bg-color, rgb(241,243,245));
+                  pointer-events: none;
+              }
+              ::slotted(input):disabled:after {
+                  background: var(--material-checkbox-disabled-knob-color, rgb(206,212,218));
+                  box-shadow: var(--material-checkbox-disabled-shadow, 0 .2rem .5rem rgba(0,0,0,.1));
+              }
+          </style>
+          <label class="material-toggle__switch"><slot></slot></label>
+      `;
+
+      //
+    //   this.$input = this.querySelector('input');
     }
 
-    createdCallback() {
+    connectedCallback() {
         var checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         this.appendChild(checkbox);
-
-        this.createShadowRoot().innerHTML = `
-            <style>
-                :host{
-                }
-                ::content input{
-                    position: relative;
-                    display: inline-block;
-                    border: 0;
-                    margin: 10px 35px 10px 3px;
-                }
-                ::content input:before {
-                    content: "";
-                    position: absolute;
-                    display: block;
-                    left: -3px;
-                    top: -3px;
-                    height: 16px;
-                    width: 44px;
-                    background: white;
-                    background-image: linear-gradient(var(--material-checkbox-bg-color, rgb(206,212,218)), var(--material-checkbox-bg-color, rgb(206,212,218)));
-                    border-radius: 100px;
-                    transition: all 0.3s ease;
-                }
-                ::content input:after {
-                    left: 20px;
-                    position: absolute;
-                    left: -5px;
-                    top: -8px;
-                    display: block;
-                    width: 26px;
-                    height: 26px;
-                    border-radius: 100px;
-                    background: var(--material-checkbox-knob-color, rgb(255,255,255));
-                    box-shadow: var(--material-checkbox-shadow, 0 .2rem .5rem rgba(0,0,0,.15));
-                    content: '';
-                    transition: all 0.3s ease;
-                }
-                ::content input:active:after {
-                    transform: scale(1.15, 0.85);
-                }
-                ::content input:checked:before {
-                    background-image: linear-gradient(var(--material-checkbox-highlight-color, rgba(54,79,199,0.5)), var(--material-checkbox-highlight-color, rgba(54,79,199,0.5)));
-                }
-                ::content input:checked:after {
-                    left: 20px;
-                    background: var(--material-checkbox-highlight-color, rgb(54,79,199));
-                }
-                ::content input:disabled:before{
-                    background: var(--material-checkbox-disabled-bg-color, rgb(241,243,245));
-                    pointer-events: none;
-                }
-                ::content input:disabled:after {
-                    background: var(--material-checkbox-disabled-knob-color, rgb(206,212,218));
-                    box-shadow: var(--material-checkbox-disabled-shadow, 0 .2rem .5rem rgba(0,0,0,.1));
-                }
-            </style>
-            <content></content>
-        `;
-        this.$input = this.querySelector('input');
         // shim shadowDOM styling
-        if(WebComponents !== undefined && WebComponents.flags.shadow === true){
-            WebComponents.ShadowCSS.shimStyling( this.shadowRoot, 'material-toggle' )
-        }
-        this.attributesExceptions = [];
-        this._transferAttributes();
+        // if(WebComponents !== undefined && WebComponents.flags.shadow === true){
+        //     WebComponents.ShadowCSS.shimStyling( this.shadowRoot, 'material-toggle' )
+        // }
+        // this.attributesExceptions = [];
+        // this._transferAttributes();
     }
 
     /**
@@ -100,5 +115,4 @@ class MaterialToggle extends HTMLInputElement {
         }
     }
 }
-
-document.registerElement('material-toggle', MaterialToggle);
+customElements.define('material-toggle', MaterialToggle);

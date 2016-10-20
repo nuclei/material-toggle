@@ -25,6 +25,9 @@
   },
   "homepage": "https://github.com/nuclei/material-toggle#readme",
   "devDependencies": {
+    "@webcomponents/custom-elements": "^1.0.0-alpha.3",
+    "@webcomponents/shadycss": "github:webcomponents/shadycss",
+    "@webcomponents/shadydom": "github:webcomponents/shadydom",
     "babel-preset-latest": "^6.16.0",
     "bower": "^1.7.9",
     "coveralls": "^2.11.14",

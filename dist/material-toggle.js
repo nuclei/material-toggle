@@ -14,7 +14,13 @@ var MaterialToggle = function (_HTMLInputElement) {
     function MaterialToggle() {
         _classCallCheck(this, MaterialToggle);
 
-        return _possibleConstructorReturn(this, (MaterialToggle.__proto__ || Object.getPrototypeOf(MaterialToggle)).call(this)); // always call super() first in the ctor. This also calls the extended class' ctor.
+        // always call super() first in the ctor.
+        var _this = _possibleConstructorReturn(this, (MaterialToggle.__proto__ || Object.getPrototypeOf(MaterialToggle)).call(this));
+
+        _this.addEventListener('click', function (e) {
+            return _this.drawRipple(e.offsetX, e.offsetY);
+        });
+        return _this;
     }
 
     _createClass(MaterialToggle, [{
@@ -82,10 +88,27 @@ var MaterialToggle = function (_HTMLInputElement) {
                 }
             }
         }
+
+        // Material design ripple animation.
+
+    }, {
+        key: 'drawRipple',
+        value: function drawRipple(x, y) {
+            var div = document.createElement('div');
+            div.classList.add('ripple');
+            this.appendChild(div);
+            div.style.top = y - div.clientHeight / 2 + 'px';
+            div.style.left = x - div.clientWidth / 2 + 'px';
+            div.style.backgroundColor = 'currentColor';
+            div.classList.add('run');
+            div.addEventListener('transitionend', function (e) {
+                return div.remove();
+            });
+        }
     }]);
 
     return MaterialToggle;
 }(HTMLInputElement);
 
-document.registerElement('material-toggle', MaterialToggle);
+customElements.define('material-toggle', MaterialToggle, { extends: 'input' });
 //# sourceMappingURL=material-toggle.js.map
