@@ -19,9 +19,7 @@ class MaterialToggle extends HTMLInputElement {
                     position: relative;
                     display: inline-block;
                     border: 0;
-                    width: 10px;
-                    height: 10px;
-                    margin: 10px 40px 10px 3px;
+                    margin: 10px 35px 10px 3px;
                 }
                 ::content input:before {
                     content: "";
@@ -69,9 +67,7 @@ class MaterialToggle extends HTMLInputElement {
                     box-shadow: var(--material-checkbox-disabled-shadow, 0 .2rem .5rem rgba(0,0,0,.1));
                 }
             </style>
-            <div class="material-toggle__checkbox">
-                <content></content>
-            </div>
+            <content></content>
         `;
         this.$input = this.querySelector('input');
         // shim shadowDOM styling
@@ -98,6 +94,9 @@ class MaterialToggle extends HTMLInputElement {
     _transferAttribute(attrName, val, attributesExceptions){
         if(attributesExceptions.indexOf(attrName) === -1){
             this.$input.setAttribute(attrName,val);
+            if(attrName === 'id'){
+                this.removeAttribute('id');
+            }
         }
     }
 }
