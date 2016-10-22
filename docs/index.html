@@ -29,8 +29,8 @@
                 --material-input-line-height: 3px;
                 --material-input-highlight-line-height: 8px;
             }
-            material-input[name=phone]{
-                width: 200px;
+            material-toggle{
+                /*border: 1px solid red;*/
             }
             nav{
                 position: relative;
@@ -56,7 +56,9 @@
             <div>Material-input</div>
         </nav>
         <form action="https://httpbin.org/get" method="get">
-            <material-toggle name="subscribe" id="subscribe"></material-toggle>
+            <material-toggle name="subscribe" validity="true">Label</material-toggle>
+            <material-toggle name="subscribe" disabled checked validity="false">Label</material-toggle>
+            <label><input type="checkbox">Test</label>
             <button type="submit">Submit</button>
         </form>
     </body>
