@@ -1,114 +1,251 @@
+(function () {
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+/**
+ * toggle attribute
+ */
+var _toggleAttribute = function(el, attr, condition, value = ''){
+    if(condition === true){
+        return el.setAttribute(attr,value);
+    }else{
+        return el.removeAttribute(attr);
+    }
+};
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+/**
+ * A simple (boolean) material toggle based on a checkbox, which works in a normal html form
+ */
+class MaterialToggle extends HTMLElement {
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var MaterialToggle = function (_HTMLInputElement) {
-    _inherits(MaterialToggle, _HTMLInputElement);
-
-    function MaterialToggle() {
-        _classCallCheck(this, MaterialToggle);
-
-        // always call super() first in the ctor.
-        var _this = _possibleConstructorReturn(this, (MaterialToggle.__proto__ || Object.getPrototypeOf(MaterialToggle)).call(this));
-
-        _this.addEventListener('click', function (e) {
-            return _this.drawRipple(e.offsetX, e.offsetY);
-        });
-        return _this;
+    constructor() {
+        super();
+        // Attach a shadow root to the element.
+        let shadowRoot = this.attachShadow({mode: 'open'});
+        shadowRoot.innerHTML = `
+            <style>
+                :host{
+                    display: inline-block;
+                    position: relative;
+                    --material-checkbox-highlight-color: var(--accent-color, rgba(54,79,199,0.5));
+                }
+                ::slotted(input){
+                    pointer-events: none;
+                    position: absolute;
+                    left: -100%;
+                }
+                ::slotted(label){
+                    display: block;
+                    position: relative;
+                    background: transparent;
+                    padding-left: 54px;
+                }
+                .material-toggle__switch{
+                    position: absolute;
+                    display: block;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    left: 0;
+                    height: 16px;
+                    width: 44px;
+                    background: white;
+                    background-image: linear-gradient(var(--material-checkbox-bg-color, rgb(206,212,218)), var(--material-checkbox-bg-color, rgb(206,212,218)));
+                    border-radius: 100px;
+                    transition: all 0.3s ease;
+                    pointer-events: none;
+                }
+                .material-toggle__knob {
+                    position: absolute;
+                    left: -5px;
+                    top: -5px;
+                    display: block;
+                    width: 26px;
+                    height: 26px;
+                    border-radius: 100px;
+                    background: var(--material-checkbox-knob-color, rgb(255,255,255));
+                    box-shadow: var(--material-checkbox-shadow, 0 .2em .5em rgba(0,0,0,.15));
+                    content: '';
+                    transition: all 0.3s ease;
+                }
+                :host([checked]) .material-toggle__switch{
+                    background-image:
+                    linear-gradient(rgba(255,255,255,0.75), rgba(255,255,255,0.75)),
+                    linear-gradient(var(--material-checkbox-highlight-color), var(--material-checkbox-highlight-color));
+                }
+                :host([checked]) .material-toggle__knob {
+                    left: 20px;
+                    background: var(--material-checkbox-highlight-color);
+                }
+                :host([disabled]) .material-toggle__switch{
+                    background: var(--material-checkbox-disabled-bg-color, rgb(241,243,245));
+                    pointer-events: none;
+                }
+                :host([disabled]) .material-toggle__knob{
+                    background: var(--material-checkbox-disabled-knob-color, rgb(206,212,218));
+                    box-shadow: var(--material-checkbox-disabled-shadow, 0 .2em .5em rgba(0,0,0,.1));
+                }
+                :host(:focus){
+                    outline: none;
+                }
+                :host(:focus) .material-toggle__knob:not(.unfocused){
+                    box-shadow: var(--material-checkbox-shadow, 0 .2em .5em rgba(0,0,0,.15)), 0 0 0 .7em rgba(0,0,0,.15);
+                }
+                :host([checked]:focus) .material-toggle__knob:not(.unfocused){
+                    box-shadow: var(--material-checkbox-shadow, 0 .2em .5em rgba(0,0,0,.15)), 0 0 0 .7em var(--material-checkbox-semi-highlight-color, rgba(54,79,199,.25));
+                }
+            </style>
+            <slot></slot>
+            <div class="material-toggle__switch">
+                <div class="material-toggle__knob" draggable="true"></div>
+            </div>
+        `;
     }
 
-    _createClass(MaterialToggle, [{
-        key: 'createdCallback',
-        value: function createdCallback() {
-            var checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            this.appendChild(checkbox);
+    connectedCallback() {
+        // get elements
+        this.$knob = this.shadowRoot.querySelector('.material-toggle__knob');
+        this.$label = document.createElement('label');
+        this.$label.innerHTML = `
+            <input type="checkbox" style="position: absolute; opacity: 0; pointer-events: none;" />
+            <div class="material-toggle__label">${this.innerHTML}</div>
+        `;
+        // remove potential label from slot as it is added above
+        this.innerHTML = '';
+        this.appendChild(this.$label);
+        this.$checkbox = this.querySelector('input');
+        // reset disabled
+        this.disabled = this.disabled;
+        this.checked = this.checked;
+        // add events
+        this._addEvents();
+    }
 
-            this.createShadowRoot().innerHTML = '\n            <style>\n                :host{\n                }\n                ::content input{\n                    position: relative;\n                    display: inline-block;\n                    border: 0;\n                    margin: 10px 35px 10px 3px;\n                }\n                ::content input:before {\n                    content: "";\n                    position: absolute;\n                    display: block;\n                    left: -3px;\n                    top: -3px;\n                    height: 16px;\n                    width: 44px;\n                    background: white;\n                    background-image: linear-gradient(var(--material-checkbox-bg-color, rgb(206,212,218)), var(--material-checkbox-bg-color, rgb(206,212,218)));\n                    border-radius: 100px;\n                    transition: all 0.3s ease;\n                }\n                ::content input:after {\n                    left: 20px;\n                    position: absolute;\n                    left: -5px;\n                    top: -8px;\n                    display: block;\n                    width: 26px;\n                    height: 26px;\n                    border-radius: 100px;\n                    background: var(--material-checkbox-knob-color, rgb(255,255,255));\n                    box-shadow: var(--material-checkbox-shadow, 0 .2rem .5rem rgba(0,0,0,.15));\n                    content: \'\';\n                    transition: all 0.3s ease;\n                }\n                ::content input:active:after {\n                    transform: scale(1.15, 0.85);\n                }\n                ::content input:checked:before {\n                    background-image: linear-gradient(var(--material-checkbox-highlight-color, rgba(54,79,199,0.5)), var(--material-checkbox-highlight-color, rgba(54,79,199,0.5)));\n                }\n                ::content input:checked:after {\n                    left: 20px;\n                    background: var(--material-checkbox-highlight-color, rgb(54,79,199));\n                }\n                ::content input:disabled:before{\n                    background: var(--material-checkbox-disabled-bg-color, rgb(241,243,245));\n                    pointer-events: none;\n                }\n                ::content input:disabled:after {\n                    background: var(--material-checkbox-disabled-knob-color, rgb(206,212,218));\n                    box-shadow: var(--material-checkbox-disabled-shadow, 0 .2rem .5rem rgba(0,0,0,.1));\n                }\n            </style>\n            <content></content>\n        ';
-            this.$input = this.querySelector('input');
-            // shim shadowDOM styling
-            if (WebComponents !== undefined && WebComponents.flags.shadow === true) {
-                WebComponents.ShadowCSS.shimStyling(this.shadowRoot, 'material-toggle');
+    _addEvents(){
+        // add event
+        this.$checkbox.addEventListener('change',function(e){
+            _toggleAttribute(this, 'checked', e.target.checked);
+        }.bind(this));
+        // toggle checkbox in space
+        this.addEventListener('keydown',function(e){
+            // space
+            if(e.keyCode === 32){
+                _toggleAttribute(this, 'checked', !e.target.checked);
             }
-            this.attributesExceptions = [];
-            this._transferAttributes();
+        });
+        // submit form on return
+        this.addEventListener('keydown',function(e){
+            // return
+            if(e.keyCode === 13){
+
+            }
+        });
+        // remove focus on click
+        this.$label.addEventListener('mousedown', function(){
+            this.$knob.classList.add('unfocused');
+        }.bind(this));
+        // add focus on mouse event
+        this.$label.addEventListener('keydown', function(){
+            this.$knob.classList.remove('unfocused');
+        }.bind(this));
+    }
+
+    static get observedAttributes() {
+        return [
+            /** @type {boolean} When given the element is totally inactive */
+            'disabled',
+            /** @type {boolean} When given the element is set to active */
+            'checked',
+            /** @type {true|false} When given, sets the validity state*/
+            'validity'
+        ];
+    }
+
+    attributeChangedCallback(attrName, oldVal, newVal){
+        if (this.disabled) {
+            this.setAttribute('tabindex', '-1');
+            this.setAttribute('aria-disabled', 'true');
+        } else {
+            this.setAttribute('tabindex', '0');
+            this.setAttribute('aria-disabled', 'false');
         }
+    }
 
-        /**
-         * transfer attributes to input
-         */
+    get disabled() {
+        return this.hasAttribute('disabled');
+    }
 
-    }, {
-        key: '_transferAttributes',
-        value: function _transferAttributes() {
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
+    set disabled(val) {
+        // Reflect the value of `disabled` as an attribute.
+        if (val) {
+            this.setAttribute('disabled', '');
+            this.$checkbox.setAttribute('disabled','');
+        } else {
+            this.removeAttribute('disabled');
+            this.$checkbox.removeAttribute('disabled');
+        }
+    }
 
-            try {
-                for (var _iterator = Object.keys(this.attributes)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var key = _step.value;
+    get checked() {
+        return this.hasAttribute('checked');
+    }
 
-                    if (this.attributes.hasOwnProperty(key)) {
-                        this._transferAttribute(this.attributes[key].name, this.attributes[key].value, this.attributesExceptions);
-                    }
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
+    set checked(val) {
+        if (val) {
+            this.setAttribute('checked', '');
+            this.$checkbox.setAttribute('checked','');
+        } else {
+            this.removeAttribute('checked');
+            this.$checkbox.removeAttribute('checked');
+        }
+    }
+
+    set validity(val) {
+        // Reflect the value of `validity` as an attribute.
+        if (val === true || val === false) {
+            this.setAttribute('validity', val);
+        } else {
+            this.removeAttribute('validity');
+        }
+    }
+
+    get validity() {
+        return this.getAttribute('validity');
+    }
+
+    /**
+     * transfer attributes to input
+     */
+    _transferAttributes(){
+        for(var key of Object.keys(this.attributes)){
+            if (this.attributes.hasOwnProperty(key)) {
+                this._transferAttribute(this.attributes[key].name, this.attributes[key].value, this.attributesExceptions);
             }
         }
-        /**
-         * transfer attribute to input
-         */
-
-    }, {
-        key: '_transferAttribute',
-        value: function _transferAttribute(attrName, val, attributesExceptions) {
-            if (attributesExceptions.indexOf(attrName) === -1) {
-                this.$input.setAttribute(attrName, val);
-                if (attrName === 'id') {
-                    this.removeAttribute('id');
-                }
+    }
+    /**
+     * transfer attribute to input
+     */
+    _transferAttribute(attrName, val, attributesExceptions){
+        if(attributesExceptions.indexOf(attrName) === -1){
+            this.$input.setAttribute(attrName,val);
+            if(attrName === 'id'){
+                this.removeAttribute('id');
             }
         }
+    }
+    /**
+     * toggle attribute
+     */
+    // _toggleAttr(el, attr, condition, value = ''){
+    //     if(condition === true){
+    //         return el.setAttribute(attr,value);
+    //     }else{
+    //         return el.removeAttribute(attr);
+    //     }
+    // }
+}
 
-        // Material design ripple animation.
+customElements.define('material-toggle', MaterialToggle);
 
-    }, {
-        key: 'drawRipple',
-        value: function drawRipple(x, y) {
-            var div = document.createElement('div');
-            div.classList.add('ripple');
-            this.appendChild(div);
-            div.style.top = y - div.clientHeight / 2 + 'px';
-            div.style.left = x - div.clientWidth / 2 + 'px';
-            div.style.backgroundColor = 'currentColor';
-            div.classList.add('run');
-            div.addEventListener('transitionend', function (e) {
-                return div.remove();
-            });
-        }
-    }]);
+}());
 
-    return MaterialToggle;
-}(HTMLInputElement);
-
-customElements.define('material-toggle', MaterialToggle, { extends: 'input' });
 //# sourceMappingURL=material-toggle.js.map

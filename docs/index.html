@@ -4,12 +4,10 @@
         <meta charset="utf-8">
         <title>Material-toggle</title>
         <script src="../node_modules/@webcomponents/custom-elements/custom-elements.min.js"></script>
-        <script src="../node_modules/@webcomponents/custom-elements/custom-elements.min.js"></script>
         <script src="../node_modules/@webcomponents/shadydom/shadydom.min.js"></script>
         <script src="../node_modules/@webcomponents/shadycss/shadycss.min.js"></script>
         <script src="../src/material-toggle.js"></script>
         <!-- this is only for the demos -->
-        <!-- <script src="https://rawgit.com/nuclei/material-input/master/dist/material-toggle.js"></script> -->
         <style media="screen">
             body{
                 margin: 0;
@@ -30,7 +28,8 @@
                 --material-input-highlight-line-height: 8px;
             }
             material-toggle{
-                /*border: 1px solid red;*/
+                --accent-color: green;
+                --material-checkbox-semi-highlight-color: rgba(0,128,0,.15);
             }
             nav{
                 position: relative;
@@ -56,9 +55,10 @@
             <div>Material-input</div>
         </nav>
         <form action="https://httpbin.org/get" method="get">
-            <material-toggle name="subscribe" validity="true">Label</material-toggle>
-            <material-toggle name="subscribe" disabled checked validity="false">Label</material-toggle>
-            <label><input type="checkbox">Test</label>
+            Test
+            <material-toggle name="subscribe" validity="true" autofocus required>Subscribe</material-toggle>
+            <material-toggle name="remember" disabled checked validity="false">Remember</material-toggle>
+            <label><input type="checkbox" required>Test</label>
             <button type="submit">Submit</button>
         </form>
     </body>
