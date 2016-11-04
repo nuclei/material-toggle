@@ -1,6 +1,7 @@
 # Material-toggle
 An easy drop-in material design vanilla custom toggle element. HTML form ready, no framework dependencies, small footprint.
 
+[![Spec Custom Elements V1](https://img.shields.io/badge/spec-custom%20elements%20v1-F52757.svg?style=flat-square)](https://www.w3.org/TR/custom-elements/)
 [![Build Status](https://img.shields.io/travis/nuclei/material-toggle/master.svg?style=flat-square)](https://travis-ci.org/nuclei/material-toggle) [![npm](https://img.shields.io/npm/v/material-toggle.svg?style=flat-square)](https://www.npmjs.com/package/material-toggle) [![npm](https://img.shields.io/npm/dt/material-toggle.svg?style=flat-square)](https://www.npmjs.com/package/material-toggle) [![npm](https://img.shields.io/npm/l/material-toggle.svg?style=flat-square)](https://github.com/nuclei/material-toggle/blob/master/LICENSE)
 
 ## Demo
