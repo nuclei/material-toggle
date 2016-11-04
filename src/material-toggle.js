@@ -139,15 +139,15 @@ class MaterialToggle extends HTMLElement {
         this.innerHTML = '';
         this.appendChild(this.$label);
         this.$checkbox = this.querySelector('input');
-        // reset disabled
-        this.disabled = this.disabled;
-        this.checked = this.checked;
 
         _transferAttributes(this, this.$checkbox, [
             'name',
             'required',
             'autofocus'
         ]);
+        // reset values
+        this.disabled = this.disabled;
+        this.checked = this.checked;
         // add events
         this._addEvents();
     }
@@ -235,10 +235,14 @@ class MaterialToggle extends HTMLElement {
     set checked(val) {
         if (val) {
             this.setAttribute('checked', '');
-            this.$checkbox.setAttribute('checked','');
+            if(this.$checkbox !== undefined){
+                this.$checkbox.setAttribute('checked','');
+            }
         } else {
             this.removeAttribute('checked');
-            this.$checkbox.removeAttribute('checked');
+            if(this.$checkbox !== undefined){
+                this.$checkbox.removeAttribute('checked');
+            }
         }
     }
 

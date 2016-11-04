@@ -11,18 +11,59 @@
     <body>
         <!-- <test-fixture id="fixture">
             <template>
-                <material-input value="test"></material-input>
+                <material-toggle name="inputName" required autofocus checked></material-toggle>
             </template>
         </test-fixture> -->
-        <material-toggle name="inputName"></material-toggle>
+        <material-toggle name="inputName" id="fixture" required autofocus checked></material-toggle>
     <script>
         suite('<material-toggle>', function() {
             var el;
-
+            var checkbox;
             setup(function() {
                 // el = fixture('fixture');
                 el = document.getElementById('fixture');
+                checkbox = el.querySelector('input');
             });
+
+            test('check the "name" property', function() {
+                assert.isTrue(!el.hasAttribute('name'));
+                assert.isTrue(checkbox.hasAttribute('name'));
+            });
+
+            test('check the "required" property', function() {
+                assert.isTrue(!el.hasAttribute('required'));
+                assert.isTrue(checkbox.hasAttribute('required'));
+            });
+
+            test('check the "autofocus" property', function() {
+                assert.isTrue(!el.hasAttribute('autofocus'));
+                assert.isTrue(checkbox.hasAttribute('autofocus'));
+            });
+
+            test('check if "checked" property is set according to attribute', function() {
+                assert.isTrue(el.hasAttribute('checked'));
+                assert.isTrue(checkbox.hasAttribute('checked'));
+            });
+
+            test('change the "checked" property', function() {
+                el.checked = false;
+                assert.isTrue(!el.hasAttribute('checked'));
+                assert.isTrue(!checkbox.hasAttribute('checked'));
+
+                el.checked = true;
+                assert.isTrue(el.hasAttribute('checked'));
+                assert.isTrue(checkbox.hasAttribute('checked'));
+            });
+
+            // test('change the "checked" attribute', function() {
+            //     el.checked = false;
+            //     assert.isTrue(!el.hasAttribute('checked'));
+            //     assert.isTrue(!checkbox.hasAttribute('checked'));
+            //
+            //     el.setAttribute('checked', '');
+            //     assert.isTrue(el.hasAttribute('checked'));
+            //     assert.isTrue(checkbox.hasAttribute('checked'));
+            // });
       });
     </script>
     </body>
