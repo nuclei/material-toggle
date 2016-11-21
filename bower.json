@@ -1,0 +1,23 @@
+{
+  "name": "material-input",
+  "description": "An easy drop-in material-input solution as a custom element",
+  "main": "dist/material-toggle.js",
+  "authors": [
+    "Lukas Oppermann"
+  ],
+  "license": "MIT",
+  "keywords": [
+      "material-design",
+      "webcomponent",
+      "toggle",
+      "form"
+  ],
+  "homepage": "https://github.com/nuclei/material-input",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
