@@ -3,10 +3,10 @@
     <head>
         <meta charset="utf-8">
         <title>Material-toggle</title>
-        <script src="../node_modules/@webcomponents/custom-elements/custom-elements.min.js"></script>
-        <script src="../node_modules/@webcomponents/shadydom/shadydom.min.js"></script>
-        <script src="../node_modules/@webcomponents/shadycss/shadycss.min.js"></script>
-        <script src="../src/material-toggle.js"></script>
+        <script src="custom-elements.min.js"></script>
+        <script src="shadydom.min.js"></script>
+        <script src="shadycss.min.js"></script>
+        <script src="material-toggle.js"></script>
         <!-- this is only for the demos -->
         <style media="screen">
             body{
@@ -55,7 +55,7 @@
             <div>Material-input</div>
         </nav>
         <form action="https://httpbin.org/get" method="get">
-            Test
+            <input type="text" placeholder="demo">
             <material-toggle name="subscribe" validity="true" checked autofocus required>Subscribe</material-toggle>
             <material-toggle name="remember" disabled checked validity="false">Remember</material-toggle>
             <label><input type="checkbox" required>Test</label>
