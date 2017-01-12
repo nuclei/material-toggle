@@ -12,10 +12,23 @@ An easy drop-in material design vanilla custom toggle element. HTML form ready, 
 ```
 <custom-element-demo>
   <template>
-    <script src="docs/webcomponentsjs/webcomponents.js"></script>
-    <script src="src/material-toggle.js"></script>
-    <label><material-toggle name="subscribe" id="subscribe"></material-toggle>Subscribe</label>
-    <label><material-toggle name="remind" id="remind" disabled></material-toggle>Remind</label>
+    <script src="docs/custom-elements.min.js"></script>
+    <script src="docs/shadydom.min.js"></script>
+    <script src="docs/shadycss.min.js"></script>
+    <script src="docs/material-toggle.js"></script>
+    <style>
+      .test-elements{
+        margin: 30px;
+        font-family: sans-serif;
+      }
+      material-toggle{
+        padding-right: 10px;
+      }
+    </style>
+    <div class="test-elements">
+      <material-toggle name="subscribe" id="subscribe">Subscribe</material-toggle>
+      <label><material-toggle name="remind" id="remind" disabled=""></material-toggle>Remind</label>
+    </div>
   </template>
 </custom-element-demo>
 ```

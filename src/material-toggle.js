@@ -39,7 +39,7 @@ var template = makeTemplate`<style>
     :host{
         display: inline-block;
         position: relative;
-        --material-checkbox-highlight-color: var(--accent-color, rgba(54,79,199,0.5));
+        --material-checkbox-highlight-color: var(--accent-color, rgba(54,79,199,1));
     }
     :host ::slotted(input){
         pointer-events: none;
@@ -48,6 +48,8 @@ var template = makeTemplate`<style>
     }
     :host ::slotted(label){
         display: block;
+        min-width: 0px;
+        min-height: 18px;
         position: relative;
         background: transparent;
         padding-left: 54px;

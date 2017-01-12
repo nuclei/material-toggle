@@ -7,22 +7,24 @@
     <script src="../node_modules/@webcomponents/shadycss/shadycss.min.js"></script>
     <script src="../node_modules/web-component-tester/browser.js"></script>
     <script src="../src/material-toggle.js"></script>
+    <style media="screen">
+      .test-elements{
+        margin: 30px;
+        font-family: sans-serif;
+      }
+    </style>
     </head>
     <body>
-        <!-- <test-fixture id="fixture">
-            <template>
-                <material-toggle name="inputName" required autofocus checked></material-toggle>
-            </template>
-        </test-fixture> -->
+      <div class="test-elements">
         <input type="text" placeholder="demo">
         <material-toggle name="subscribe" validity="true" checked autofocus required>Subscribe</material-toggle>
-        <material-toggle name="inputName" id="fixture" required autofocus checked></material-toggle>
+        <label><material-toggle name="inputName" id="fixture" required autofocus checked></material-toggle>Remind me</label>
+      </div>
     <script>
         suite('<material-toggle>', function() {
             var el;
             var checkbox;
             setup(function() {
-                // el = fixture('fixture');
                 el = document.getElementById('fixture');
                 checkbox = el.querySelector('input');
             });
