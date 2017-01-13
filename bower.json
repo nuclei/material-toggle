@@ -7,10 +7,10 @@
   ],
   "license": "MIT",
   "keywords": [
-      "material-design",
-      "webcomponent",
-      "toggle",
-      "form"
+    "material-design",
+    "webcomponent",
+    "toggle",
+    "form"
   ],
   "homepage": "https://github.com/nuclei/material-input",
   "ignore": [
@@ -19,5 +19,13 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "shadycss": "webcomponents/shadycss",
+    "custom-elements": "webcomponents/custom-elements#^1.0.0-alpha.3",
+    "shadydom": "webcomponents/shadydom"
+  },
+  "resolutions": {
+    "custom-elements": "master"
+  }
 }
