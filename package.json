@@ -1,6 +1,6 @@
 {
   "name": "material-toggle",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Material Design toggle web component. No framework, vanilla js",
   "main": "dist/material-toggle.js",
   "scripts": {
