@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <script src="../node_modules/@webcomponents/custom-elements/custom-elements.min.js"></script>
+    <script src="../node_modules/@webcomponents/shadydom/shadydom.min.js"></script>
+    <script src="../node_modules/@webcomponents/shadycss/shadycss.min.js"></script>
+    <script src="../node_modules/web-component-tester/browser.js"></script>
+    <script src="../dist/material-toggle.js"></script>
+    <style media="screen">
+      .test-elements{
+        margin: 30px;
+        font-family: sans-serif;
+      }
+    </style>
+    </head>
+    <body>
+      <div class="test-elements">
+        <input type="text" placeholder="demo">
+        <material-toggle name="subscribe" validity="true" checked autofocus required>Subscribe</material-toggle>
+        <label><material-toggle name="inputName" id="fixture" required autofocus checked></material-toggle>Remind me</label>
+      </div>
+    <script>
+        suite('<material-toggle>', function() {
+            var el;
+            var checkbox;
+            setup(function() {
+                el = document.getElementById('fixture');
+                checkbox = el.querySelector('input');
+            });
+
+            test('check the "name" property', function() {
+                assert.isTrue(!el.hasAttribute('name'));
+                assert.isTrue(checkbox.hasAttribute('name'));
+            });
+
+            test('check the "required" property', function() {
+                assert.isTrue(!el.hasAttribute('required'));
+                assert.isTrue(checkbox.hasAttribute('required'));
+            });
+
+            test('check the "autofocus" property', function() {
+                assert.isTrue(!el.hasAttribute('autofocus'));
+                assert.isTrue(checkbox.hasAttribute('autofocus'));
+            });
+
+            test('check if "checked" property is set according to attribute', function() {
+                assert.isTrue(el.hasAttribute('checked'));
+                assert.isTrue(checkbox.hasAttribute('checked'));
+            });
+
+            test('change the "checked" property', function() {
+                el.checked = false;
+                assert.isTrue(!el.hasAttribute('checked'));
+                assert.isTrue(!checkbox.hasAttribute('checked'));
+
+                el.checked = true;
+                assert.isTrue(el.hasAttribute('checked'));
+                assert.isTrue(checkbox.hasAttribute('checked'));
+            });
+
+            // test('change the "checked" attribute', function() {
+            //     el.checked = false;
+            //     assert.isTrue(!el.hasAttribute('checked'));
+            //     assert.isTrue(!checkbox.hasAttribute('checked'));
+            //
+            //     el.setAttribute('checked', '');
+            //     assert.isTrue(el.hasAttribute('checked'));
+            //     assert.isTrue(checkbox.hasAttribute('checked'));
+            // });
+      });
+    </script>
+    </body>
+</html>
