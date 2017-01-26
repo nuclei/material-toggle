@@ -114,7 +114,6 @@ var template = makeTemplate`<style>
     </div>
 `
 
-ShadyCSS.prepareTemplate(template, 'material-toggle') // eslint-disable-line no-undef
 /**
  * A simple (boolean) material toggle based on a checkbox, which works in a normal html form
  */
@@ -124,7 +123,11 @@ class MaterialToggle extends HTMLElement { // eslint-disable-line no-undef
     super()
         // Attach a shadow root to the element.
     let shadowRoot = this.attachShadow({mode: 'open'})
-    ShadyCSS.applyStyle(this) // eslint-disable-line no-undef
+    // check if polyfill is used
+    if (typeof ShadyCSS !== 'undefined') {
+      ShadyCSS.prepareTemplate(template, 'material-toggle') // eslint-disable-line no-undef
+      ShadyCSS.applyStyle(this) // eslint-disable-line no-undef
+    }
     shadowRoot.appendChild(document.importNode(template.content, true))
   }
 
@@ -262,5 +265,3 @@ class MaterialToggle extends HTMLElement { // eslint-disable-line no-undef
 }
 
 customElements.define('material-toggle', MaterialToggle) // eslint-disable-line no-undef
-
-//# sourceMappingURL=material-toggle.js.map
