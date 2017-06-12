@@ -1,41 +1,30 @@
-/**
- * transfer attributes to input
- */
+(function () {
+'use strict';
+
+const makeTemplate = function (strings) {
+    let html = strings[strings.length - 1];
+    let template = document.createElement('template');
+    template.innerHTML = html;
+    return template;
+};
+
 const _transferAttributes = function (ce, element, allowed) {
-  allowed.forEach(function (attrName) {
-    if (ce.hasAttribute(attrName)) {
-      element.setAttribute(attrName, ce.getAttribute(attrName) || '')
-      ce.removeAttribute(attrName)
-    }
-  })
-}
-
-/**
- * get parent form
- */
+    allowed.forEach(function (attrName) {
+        if (ce.hasAttribute(attrName)) {
+            element.setAttribute(attrName, ce.getAttribute(attrName) || '');
+            ce.removeAttribute(attrName);
+        }
+    });
+};
 const _getParentForm = function (current) {
-  current = current.parentElement
-    // return form
-  if (current.constructor === HTMLFormElement) return current // eslint-disable-line no-undef
-    // return false on body
-  if (current.constructor === HTMLBodyElement) return false // eslint-disable-line no-undef
-    // dig one level deeper
-  return _getParentForm(current)
-}
-
-const makeTemplate = function (strings, ...substs) {
-  var html = ''
-  for (let i = 0; i < substs.length; i++) {
-    html += strings[i]
-    html += substs[i]
-  }
-  html += strings[strings.length - 1]
-  var template = document.createElement('template')
-  template.innerHTML = html
-  return template
-}
-
-var template = makeTemplate`<style>
+    current = current.parentElement;
+    if (current.constructor === HTMLFormElement)
+        return current;
+    if (current.constructor === HTMLBodyElement)
+        return false;
+    return _getParentForm(current);
+};
+var template = makeTemplate `<style>
     :host{
         display: inline-block;
         position: relative;
@@ -112,158 +101,127 @@ var template = makeTemplate`<style>
     <div class="material-toggle__switch">
         <div class="material-toggle__knob" draggable="true"></div>
     </div>
-`
-
-/**
- * A simple (boolean) material toggle based on a checkbox, which works in a normal html form
- */
-class MaterialToggle extends HTMLElement { // eslint-disable-line no-undef
-
-  constructor () {
-    super()
-        // Attach a shadow root to the element.
-    let shadowRoot = this.attachShadow({mode: 'open'})
-    // check if polyfill is used
-    if (typeof ShadyCSS !== 'undefined') {
-      ShadyCSS.prepareTemplate(template, 'material-toggle') // eslint-disable-line no-undef
-      ShadyCSS.applyStyle(this) // eslint-disable-line no-undef
+`;
+class MaterialToggle extends HTMLElement {
+    constructor() {
+        super();
+        this._knob = null;
+        this._label = null;
+        this._checkbox = null;
+        let shadowRoot = this.attachShadow({ mode: 'open' });
+        if (typeof ShadyCSS !== 'undefined') {
+            ShadyCSS.prepareTemplate(template, 'material-toggle');
+            ShadyCSS.styleElement(this);
+        }
+        shadowRoot.appendChild(document.importNode(template.content, true));
     }
-    shadowRoot.appendChild(document.importNode(template.content, true))
-  }
-
-  connectedCallback () {
-        // get elements
-    this.$knob = this.shadowRoot.querySelector('.material-toggle__knob')
-    this.$label = document.createElement('label')
-    this.$label.innerHTML = `
+    connectedCallback() {
+        this._knob = this.shadowRoot.querySelector('.material-toggle__knob');
+        this._label = document.createElement('label');
+        this._label.innerHTML = `
             <input type="checkbox" tabindex="-1" style="position: absolute; opacity: 0; pointer-events: none;"/>
             <div class="material-toggle__label">${this.innerHTML}</div>
-        `
-        // remove potential label from slot as it is added above
-    this.innerHTML = ''
-    this.appendChild(this.$label)
-    this.$checkbox = this.querySelector('input')
-
-    _transferAttributes(this, this.$checkbox, [
-      'name',
-      'required',
-      'autofocus'
-    ])
-        // reset values
-    this.disabled = this.disabled
-    this.checked = this.checked
-        // add events
-    this._addEvents()
-  }
-
-  _addEvents () {
-        // add event
-    this.$checkbox.addEventListener('change', function (e) {
-      this.checked = e.target.checked
-    }.bind(this))
-        // move focus to main element if checkbox is focused
-    this.$checkbox.addEventListener('focus', function () {
-      this.focus()
-    }.bind(this))
-        // toggle checkbox in space
-    this.addEventListener('keydown', function (e) {
-            // space
-      if (e.keyCode === 32) {
-        this.checked = !this.$checkbox.checked
-      }
-    }.bind(this))
-        // submit form on return
-    this.addEventListener('keydown', function (e) {
-      var $form = _getParentForm(e.target)
-            // return
-      if (e.keyCode === 13) {
-        if ($form.checkValidity()) {
-          $form.submit()
-        } else if ($form.querySelector('[type="submit"]') !== null) {
-                    // needed to trigger validation
-          $form.querySelector('[type="submit"]').click()
+        `;
+        this.innerHTML = '';
+        this.appendChild(this._label);
+        this._checkbox = this.querySelector('input');
+        _transferAttributes(this, this._checkbox, [
+            'name',
+            'required',
+            'autofocus'
+        ]);
+        this.disabled = this.disabled;
+        this.checked = this.checked;
+        this._addEvents();
+    }
+    _addEvents() {
+        this._checkbox.addEventListener('change', function (e) {
+            this.checked = e.target.checked;
+        }.bind(this));
+        this._checkbox.addEventListener('focus', function () {
+            this.focus();
+        }.bind(this));
+        this.addEventListener('keydown', function (e) {
+            if (e.keyCode === 32) {
+                this.checked = !this._checkbox.checked;
+            }
+        }.bind(this));
+        this.addEventListener('keydown', function (e) {
+            var $form = _getParentForm(e.target);
+            if (e.keyCode === 13) {
+                if ($form.checkValidity()) {
+                    $form.submit();
+                }
+                else if ($form.querySelector('[type="submit"]') !== null) {
+                    $form.querySelector('[type="submit"]').click();
+                }
+                return;
+            }
+        });
+        this._label.addEventListener('mousedown', function () {
+            this._knob.classList.add('unfocused');
+        }.bind(this));
+        this._label.addEventListener('keydown', function () {
+            this._knob.classList.remove('unfocused');
+        }.bind(this));
+    }
+    static get observedAttributes() {
+        return ['disabled', 'checked', 'validity'];
+    }
+    attributeChangedCallback(attrName, oldVal, newVal) {
+        if (this.disabled) {
+            this.setAttribute('tabindex', '-1');
+            this.setAttribute('aria-disabled', 'true');
         }
-        return
-      }
-    })
-        // remove focus on click
-    this.$label.addEventListener('mousedown', function () {
-      this.$knob.classList.add('unfocused')
-    }.bind(this))
-        // add focus on mouse event
-    this.$label.addEventListener('keydown', function () {
-      this.$knob.classList.remove('unfocused')
-    }.bind(this))
-  }
-
-  static get observedAttributes () {
-    return [
-            /** @type {boolean} When given the element is totally inactive */
-      'disabled',
-            /** @type {boolean} When given the element is set to active */
-      'checked',
-            /** @type {true|false} When given, sets the validity state */
-      'validity'
-    ]
-  }
-
-  attributeChangedCallback (attrName, oldVal, newVal) {
-    if (this.disabled) {
-      this.setAttribute('tabindex', '-1')
-      this.setAttribute('aria-disabled', 'true')
-    } else {
-      this.setAttribute('tabindex', '0')
-      this.setAttribute('aria-disabled', 'false')
+        else {
+            this.setAttribute('tabindex', '0');
+            this.setAttribute('aria-disabled', 'false');
+        }
     }
-  }
-
-  get disabled () {
-    return this.hasAttribute('disabled')
-  }
-
-  set disabled (val) {
-        // Reflect the value of `disabled` as an attribute.
-    if (val) {
-      this.setAttribute('disabled', '')
-      this.$checkbox.setAttribute('disabled', '')
-    } else {
-      this.removeAttribute('disabled')
-      this.$checkbox.removeAttribute('disabled')
+    get disabled() {
+        return this.hasAttribute('disabled');
     }
-  }
-
-  get checked () {
-    return this.hasAttribute('checked')
-  }
-
-  set checked (val) {
-    if (val) {
-      this.setAttribute('checked', '')
-      if (this.$checkbox !== undefined) {
-        this.$checkbox.setAttribute('checked', '')
-      }
-    } else {
-      this.removeAttribute('checked')
-      if (this.$checkbox !== undefined) {
-        this.$checkbox.removeAttribute('checked')
-      }
+    set disabled(val) {
+        if (val) {
+            this.setAttribute('disabled', '');
+            this._checkbox.setAttribute('disabled', '');
+        }
+        else {
+            this.removeAttribute('disabled');
+            this._checkbox.removeAttribute('disabled');
+        }
     }
-  }
-
-  set validity (val) {
-        // Reflect the value of `validity` as an attribute.
-    if (val === true || val === false) {
-      this.setAttribute('validity', val)
-    } else {
-      this.removeAttribute('validity')
+    get checked() {
+        return this.hasAttribute('checked');
     }
-  }
-
-  get validity () {
-    return this.getAttribute('validity')
-  }
+    set checked(val) {
+        if (val) {
+            this.setAttribute('checked', '');
+            if (this._checkbox !== undefined) {
+                this._checkbox.setAttribute('checked', '');
+            }
+        }
+        else {
+            this.removeAttribute('checked');
+            if (this._checkbox !== undefined) {
+                this._checkbox.removeAttribute('checked');
+            }
+        }
+    }
+    set active(val) {
+        if (val === true) {
+            this.setAttribute('validity', 'true');
+        }
+        else if (val === false) {
+            this.removeAttribute('validity');
+        }
+    }
+    get validity() {
+        return this.getAttribute('validity') === 'true';
+    }
 }
 
-customElements.define('material-toggle', MaterialToggle) // eslint-disable-line no-undef
+customElements.define('material-toggle', MaterialToggle);
 
+}());
 //# sourceMappingURL=material-toggle.js.map

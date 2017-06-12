@@ -9,19 +9,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 --><html><head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <script src="../node_modules/@webcomponents/custom-elements/custom-elements.min.js"></script>
-    <script src="../node_modules/@webcomponents/shadydom/shadydom.min.js"></script>
-    <script src="../node_modules/@webcomponents/shadycss/shadycss.min.js"></script>
+    <script>
+      window.addEventListener('WebComponentsReady', function () {
+        let script = document.createElement('script')
+        script.setAttribute('src', '../src/material-toggle.js')
+        document.body.appendChild(script)
+      })
+    </script>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../node_modules/web-component-tester/browser.js"></script>
-    <script src="../src/material-toggle.js"></script>
   </head>
   <body>
     <script>
       // Load and run all tests (.html, .js):
       WCT.loadSuites([
         'material-toggle.html',
-        'material-toggle.html?dom=shadow',
-        'material-toggle-dist.html',
+        'material-toggle.html?dom=shadow'
       ]);
     </script>
 
