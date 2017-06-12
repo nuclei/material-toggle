@@ -23,6 +23,7 @@
   "devDependencies": {
     "custom-elements": "webcomponents/custom-elements#master",
     "shadycss": "webcomponents/shadycss",
-    "shadydom": "webcomponents/shadydom"
+    "shadydom": "webcomponents/shadydom",
+    "web-component-tester": "^6.0.0"
   }
 }

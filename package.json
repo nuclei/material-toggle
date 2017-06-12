@@ -26,18 +26,20 @@
   },
   "homepage": "https://github.com/nuclei/material-toggle#readme",
   "devDependencies": {
-    "@webcomponents/custom-elements": "^1.0.0-alpha.3",
+    "@webcomponents/custom-elements": "^1.0.0",
     "@webcomponents/shadycss": "github:webcomponents/shadycss",
     "@webcomponents/shadydom": "github:webcomponents/shadydom",
-    "coveralls": "^2.11.14",
+    "coveralls": "^2.13.1",
     "gulp": "^3.9.1",
     "gulp-sourcemaps": "^1.6.0",
     "istanbul": "^0.4.5",
     "mocha-istanbul": "^0.3.0",
     "snazzy": "^6.0.0",
     "standard": "^8.6.0",
-    "web-component-tester": "^5.0.0",
+    "web-component-tester": "^6.0.0",
     "web-component-tester-istanbul": "^0.3.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "bower": "^1.8.0"
+  }
 }
