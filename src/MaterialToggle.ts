@@ -1,3 +1,8 @@
+/* global HTMLElement HTMLFormElement HTMLBodyElement */
+'use strict'
+
+import { makeTemplate } from '../node_modules/make-template/dist/makeTemplate.js'
+declare const ShadyCSS // eslint-disable-line no-unused-vars
 /**
  * transfer attributes to input
  */
@@ -21,18 +26,6 @@ const _getParentForm = function (current) {
   if (current.constructor === HTMLBodyElement) return false // eslint-disable-line no-undef
     // dig one level deeper
   return _getParentForm(current)
-}
-
-const makeTemplate = function (strings, ...substs) {
-  var html = ''
-  for (let i = 0; i < substs.length; i++) {
-    html += strings[i]
-    html += substs[i]
-  }
-  html += strings[strings.length - 1]
-  var template = document.createElement('template')
-  template.innerHTML = html
-  return template
 }
 
 var template = makeTemplate`<style>
@@ -117,7 +110,11 @@ var template = makeTemplate`<style>
 /**
  * A simple (boolean) material toggle based on a checkbox, which works in a normal html form
  */
-class MaterialToggle extends HTMLElement { // eslint-disable-line no-undef
+export class MaterialToggle extends HTMLElement { // eslint-disable-line no-undef
+  /* Typescript: declare variables */
+  private _knob: any = null // eslint-disable-line no-undef
+  private _label: any = null // eslint-disable-line no-undef
+  private _checkbox: any = null // eslint-disable-line no-undef
 
   constructor () {
     super()
@@ -126,25 +123,25 @@ class MaterialToggle extends HTMLElement { // eslint-disable-line no-undef
     // check if polyfill is used
     if (typeof ShadyCSS !== 'undefined') {
       ShadyCSS.prepareTemplate(template, 'material-toggle') // eslint-disable-line no-undef
-      ShadyCSS.applyStyle(this) // eslint-disable-line no-undef
+      ShadyCSS.styleElement(this) // eslint-disable-line no-undef
     }
     shadowRoot.appendChild(document.importNode(template.content, true))
   }
 
   connectedCallback () {
-        // get elements
-    this.$knob = this.shadowRoot.querySelector('.material-toggle__knob')
-    this.$label = document.createElement('label')
-    this.$label.innerHTML = `
+    // get elements
+    this._knob = this.shadowRoot.querySelector('.material-toggle__knob')
+    this._label = document.createElement('label')
+    this._label.innerHTML = `
             <input type="checkbox" tabindex="-1" style="position: absolute; opacity: 0; pointer-events: none;"/>
             <div class="material-toggle__label">${this.innerHTML}</div>
         `
         // remove potential label from slot as it is added above
     this.innerHTML = ''
-    this.appendChild(this.$label)
-    this.$checkbox = this.querySelector('input')
+    this.appendChild(this._label)
+    this._checkbox = this.querySelector('input')
 
-    _transferAttributes(this, this.$checkbox, [
+    _transferAttributes(this, this._checkbox, [
       'name',
       'required',
       'autofocus'
@@ -158,18 +155,18 @@ class MaterialToggle extends HTMLElement { // eslint-disable-line no-undef
 
   _addEvents () {
         // add event
-    this.$checkbox.addEventListener('change', function (e) {
+    this._checkbox.addEventListener('change', function (e) {
       this.checked = e.target.checked
     }.bind(this))
         // move focus to main element if checkbox is focused
-    this.$checkbox.addEventListener('focus', function () {
+    this._checkbox.addEventListener('focus', function () {
       this.focus()
     }.bind(this))
         // toggle checkbox in space
     this.addEventListener('keydown', function (e) {
             // space
       if (e.keyCode === 32) {
-        this.checked = !this.$checkbox.checked
+        this.checked = !this._checkbox.checked
       }
     }.bind(this))
         // submit form on return
@@ -187,24 +184,17 @@ class MaterialToggle extends HTMLElement { // eslint-disable-line no-undef
       }
     })
         // remove focus on click
-    this.$label.addEventListener('mousedown', function () {
-      this.$knob.classList.add('unfocused')
+    this._label.addEventListener('mousedown', function () {
+      this._knob.classList.add('unfocused')
     }.bind(this))
         // add focus on mouse event
-    this.$label.addEventListener('keydown', function () {
-      this.$knob.classList.remove('unfocused')
+    this._label.addEventListener('keydown', function () {
+      this._knob.classList.remove('unfocused')
     }.bind(this))
   }
 
   static get observedAttributes () {
-    return [
-            /** @type {boolean} When given the element is totally inactive */
-      'disabled',
-            /** @type {boolean} When given the element is set to active */
-      'checked',
-            /** @type {true|false} When given, sets the validity state */
-      'validity'
-    ]
+    return ['disabled', 'checked', 'validity']
   }
 
   attributeChangedCallback (attrName, oldVal, newVal) {
@@ -222,13 +212,13 @@ class MaterialToggle extends HTMLElement { // eslint-disable-line no-undef
   }
 
   set disabled (val) {
-        // Reflect the value of `disabled` as an attribute.
+    // Reflect the value of `disabled` as an attribute.
     if (val) {
       this.setAttribute('disabled', '')
-      this.$checkbox.setAttribute('disabled', '')
+      this._checkbox.setAttribute('disabled', '')
     } else {
       this.removeAttribute('disabled')
-      this.$checkbox.removeAttribute('disabled')
+      this._checkbox.removeAttribute('disabled')
     }
   }
 
@@ -239,29 +229,27 @@ class MaterialToggle extends HTMLElement { // eslint-disable-line no-undef
   set checked (val) {
     if (val) {
       this.setAttribute('checked', '')
-      if (this.$checkbox !== undefined) {
-        this.$checkbox.setAttribute('checked', '')
+      if (this._checkbox !== undefined) {
+        this._checkbox.setAttribute('checked', '')
       }
     } else {
       this.removeAttribute('checked')
-      if (this.$checkbox !== undefined) {
-        this.$checkbox.removeAttribute('checked')
+      if (this._checkbox !== undefined) {
+        this._checkbox.removeAttribute('checked')
       }
     }
   }
 
-  set validity (val) {
-        // Reflect the value of `validity` as an attribute.
-    if (val === true || val === false) {
-      this.setAttribute('validity', val)
-    } else {
+  set active (val: boolean) {
+    // Reflect the value of `validity` as an attribute.
+    if (val === true) {
+      this.setAttribute('validity', 'true')
+    } else if (val === false) {
       this.removeAttribute('validity')
     }
   }
 
   get validity () {
-    return this.getAttribute('validity')
+    return this.getAttribute('validity') === 'true'
   }
 }
-
-customElements.define('material-toggle', MaterialToggle) // eslint-disable-line no-undef

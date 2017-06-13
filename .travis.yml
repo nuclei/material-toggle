@@ -11,5 +11,5 @@ addons:
 node_js:
   - '6'
   - '7'
-before_script: npm install
+before_script: npm install && bower install
 script: xvfb-run npm run travis

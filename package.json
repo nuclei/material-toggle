@@ -3,10 +3,17 @@
   "version": "1.0.5",
   "description": "Material Design toggle web component. No framework, vanilla js",
   "main": "dist/material-toggle.js",
+  "config": {
+    "src": "src/material-toggle.ts",
+    "moduleName": "MaterialToggle"
+  },
   "scripts": {
-    "test": "./node_modules/.bin/wct && standard 'src/*.js' | snazzy",
-    "quick-test": "./node_modules/.bin/wct --skip-selenium-install && standard 'src/*.js' | snazzy",
-    "travis": "./node_modules/.bin/wct ",
+    "standard": "standard src/*.ts --parser typescript-eslint-parser | snazzy",
+    "typescript": "tsc src/*.ts --noEmit --pretty --alwaysStrict --noUnusedLocals --allowJs --target ES5 --lib es6,dom",
+    "test": "rollup -c -m inline -o src/material-toggle.js && npm run standard &&  ./node_modules/.bin/wct && rm src/material-toggle.js",
+    "quick-test": "rollup -c -m inline -o src/material-toggle.js && npm run standard && wct --skip-selenium-install && rm src/material-toggle.js",
+    "build": "npm test && rollup -c && cp dist/material-toggle.js docs/material-toggle.js && cp -r node_modules/@webcomponents/webcomponentsjs docs/webcomponentsjs",
+    "travis": "rollup -c -m inline -o src/material-toggle.js && ./node_modules/.bin/wct && rm src/material-toggle.js",
     "cover": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha test/*.js --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "repository": {
@@ -26,20 +33,20 @@
   },
   "homepage": "https://github.com/nuclei/material-toggle#readme",
   "devDependencies": {
-    "@webcomponents/custom-elements": "^1.0.0",
-    "@webcomponents/shadycss": "github:webcomponents/shadycss",
-    "@webcomponents/shadydom": "github:webcomponents/shadydom",
+    "@webcomponents/webcomponentsjs": "^1.0.1",
+    "bower": "^1.8.0",
     "coveralls": "^2.13.1",
-    "gulp": "^3.9.1",
-    "gulp-sourcemaps": "^1.6.0",
     "istanbul": "^0.4.5",
+    "make-template": "^1.0.1",
     "mocha-istanbul": "^0.3.0",
+    "rollup": "^0.42.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-typescript": "^0.8.1",
     "snazzy": "^6.0.0",
     "standard": "^8.6.0",
+    "typescript": "^2.4.0",
+    "typescript-eslint-parser": "^3.0.0",
     "web-component-tester": "^6.0.0",
     "web-component-tester-istanbul": "^0.3.0"
-  },
-  "dependencies": {
-    "bower": "^1.8.0"
   }
 }
