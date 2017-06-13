@@ -13,7 +13,7 @@
     "test": "rollup -c -m inline -o src/material-toggle.js && npm run standard &&  ./node_modules/.bin/wct && rm src/material-toggle.js",
     "quick-test": "rollup -c -m inline -o src/material-toggle.js && npm run standard && wct --skip-selenium-install && rm src/material-toggle.js",
     "build": "npm test && rollup -c && cp dist/material-toggle.js docs/material-toggle.js && cp -r node_modules/@webcomponents/webcomponentsjs docs/webcomponentsjs",
-    "travis": "./node_modules/.bin/wct ",
+    "travis": "rollup -c -m inline -o src/material-toggle.js && ./node_modules/.bin/wct && rm src/material-toggle.js",
     "cover": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha test/*.js --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "repository": {
