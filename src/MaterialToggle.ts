@@ -19,6 +19,7 @@ const _transferAttributes = function (ce, element, allowed) {
  * get parent form
  */
 const _getParentForm = function (current) {
+  if (current.parentElement === null) return
   current = current.parentElement
     // return form
   if (current.constructor === HTMLFormElement) return current // eslint-disable-line no-undef
@@ -172,6 +173,7 @@ export class MaterialToggle extends HTMLElement { // eslint-disable-line no-unde
         // submit form on return
     this.addEventListener('keydown', function (e) {
       var $form = _getParentForm(e.target)
+      if ($form === undefined) return
             // return
       if (e.keyCode === 13) {
         if ($form.checkValidity()) {
