@@ -17,6 +17,8 @@ const _transferAttributes = function (ce, element, allowed) {
     });
 };
 const _getParentForm = function (current) {
+    if (current.parentElement === null)
+        return;
     current = current.parentElement;
     if (current.constructor === HTMLFormElement)
         return current;
@@ -29,6 +31,7 @@ var template = makeTemplate `<style>
         display: inline-block;
         position: relative;
         --material-checkbox-highlight-color: var(--accent-color, rgba(54,79,199,1));
+        --material-checkbox-highlight-overlay-color: var(--material-checkbox-highlight-overlay, rgba(255,255,255,0.75))
     }
     :host ::slotted(input){
         pointer-events: none;
@@ -72,7 +75,7 @@ var template = makeTemplate `<style>
     }
     :host([checked]) .material-toggle__switch{
         background-image:
-        linear-gradient(rgba(255,255,255,0.75), rgba(255,255,255,0.75)),
+        linear-gradient(var(--material-checkbox-highlight-overlay-color), var(--material-checkbox-highlight-overlay-color)),
         linear-gradient(var(--material-checkbox-highlight-color), var(--material-checkbox-highlight-color));
     }
     :host([checked]) .material-toggle__knob {
@@ -148,6 +151,8 @@ class MaterialToggle extends HTMLElement {
         }.bind(this));
         this.addEventListener('keydown', function (e) {
             var $form = _getParentForm(e.target);
+            if ($form === undefined)
+                return;
             if (e.keyCode === 13) {
                 if ($form.checkValidity()) {
                     $form.submit();

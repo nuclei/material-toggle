@@ -34,6 +34,7 @@ var template = makeTemplate`<style>
         display: inline-block;
         position: relative;
         --material-checkbox-highlight-color: var(--accent-color, rgba(54,79,199,1));
+        --material-checkbox-highlight-overlay-color: var(--material-checkbox-highlight-overlay, rgba(255,255,255,0.75))
     }
     :host ::slotted(input){
         pointer-events: none;
@@ -77,7 +78,7 @@ var template = makeTemplate`<style>
     }
     :host([checked]) .material-toggle__switch{
         background-image:
-        linear-gradient(rgba(255,255,255,0.75), rgba(255,255,255,0.75)),
+        linear-gradient(var(--material-checkbox-highlight-overlay-color), var(--material-checkbox-highlight-overlay-color)),
         linear-gradient(var(--material-checkbox-highlight-color), var(--material-checkbox-highlight-color));
     }
     :host([checked]) .material-toggle__knob {
